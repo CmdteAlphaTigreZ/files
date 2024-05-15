@@ -1,6 +1,7 @@
 # Biblioteca simple de gestión de cuentas bancarias
 # Autor: Santiago Pinto             Fecha: 2024-04-17
 
+
 class Cuenta:
     "Cuenta bancaria con titular y saldo.\
 \nLos montos están definidos en centésimos."
@@ -29,15 +30,19 @@ class Cuenta:
         if monto <= 0:
             raise ValueError("El monto debe ser positivo: %d" % monto)
 
-    def get_titular(self):
+    @property
+    def titular(self):
         return self.__titular
 
-    def set_titular(self, titular):
-        __comprobar_tipos( (("titular", titular),) , (str,) )
-        self.__titular = titular
+    @titular.setter
+    def titular(self, nuevo_titular):
+        __comprobar_tipos( (("titular", nuevo_titular),) , (int,) )
+        self.__titular = nuevo_titular
 
-    def get_saldo(self):
+    @property
+    def saldo(self):
         return self.__saldo
+
 
 __MSG_ERROR_TIPO = "'{:s}' debe ser un '{:s}': '{:!r}'"
 
