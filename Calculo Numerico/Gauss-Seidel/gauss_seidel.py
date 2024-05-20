@@ -21,7 +21,7 @@ class Gauss_Seidel:
             # (aunque no es convencional)
             self.__coeficientes = coeficientes.transpose().astype(np.float64)
             self.__terms_indep = terms_indep.transpose().astype(np.float64)
-            self.__variables = np.zeros(coeficientes.shape[:1], np.float64)
+            self.__variables = np.zeros(self.__coeficientes.shape[:1], np.float64)
             self.__resuelto = False
 
     def resolver(self, coeficientes, terms_indep, error_abs_max=1e-6, iteraciones_max=50):
