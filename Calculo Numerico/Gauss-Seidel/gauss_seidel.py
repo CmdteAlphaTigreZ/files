@@ -34,15 +34,27 @@ class Gauss_Seidel:
                  error_abs_max=1e-6, iteraciones_max=50, estandar=True):
         if coeficientes != None and terms_indep != None:
             self.__init__(coeficientes, terms_indep, estandar)
+            variables = self.__variables
         elif coeficientes == None ^ terms_indep == None:
             raise TypeError(Gauss_Seidel.__MSG_ERROR_AMBOS_TENSORES)
         else:
+            if self.__resuelto == None:
+                raise RuntimeError("Objeto '%s' no inicializado"
+                                   % str(type(self)) )
+            if self.__resuelto and isinstance(self.__variables, np.ndarray) \
+                and self.__variables.shape == self.__coeficientes.shape[:1]:
+                return self.__variables
             try:
                 self.__comprobar_atributos(self.__coeficientes,
                                            self.__terms_indep, estandar=False)
             except (TypeError, ValueError) as e:
                 raise RuntimeError("Objeto '%s' en estado inválido"
                                    % str(type(self)) ) from e
+            variables = self.__variables \
+                = np.zeros(self.__coeficientes.shape[:1], np.float64)
+
+        coeficientes, terms_indep = self.__coeficientes, self.__terms_indep
+        self.__ajustar_diagonal()
         pass
 
     @staticmethod
