@@ -9,12 +9,12 @@ class Gauss_Seidel:
     __MSG_ERROR_AMBOS_TENSORES = "tanto 'coeficientes' como 'terms_indep' deben proporcionarse o ser None"
 
     def __init__(self, coeficientes=None, terms_indep=None, estandar=True):
-        if coeficientes == None and terms_indep == None:
+        if coeficientes is None and terms_indep is None:
             self.__coeficientes = None
             self.__terms_indep = None
             self.__variables = None
             self.__resuelto = None #tri-estado
-        elif coeficientes == None ^ terms_indep == None:
+        elif coeficientes is None ^ terms_indep is None:
             raise TypeError(Gauss_Seidel.__MSG_ERROR_AMBOS_TENSORES)
         else:
             self.__comprobar_atributos(coeficientes, terms_indep, estandar)
@@ -32,13 +32,13 @@ class Gauss_Seidel:
 
     def resolver(self, coeficientes=None, terms_indep=None,
                  error_abs_max=1e-6, iteraciones_max=50, estandar=True):
-        if coeficientes != None and terms_indep != None:
+        if coeficientes is not None and terms_indep is not None:
             self.__init__(coeficientes, terms_indep, estandar)
             variables = self.__variables
-        elif coeficientes == None ^ terms_indep == None:
+        elif coeficientes is None ^ terms_indep is None:
             raise TypeError(Gauss_Seidel.__MSG_ERROR_AMBOS_TENSORES)
         else:
-            if self.__resuelto == None:
+            if self.__resuelto is None:
                 raise RuntimeError("Objeto '%s' no inicializado"
                                    % str(type(self)) )
             if self.__resuelto and isinstance(self.__variables, np.ndarray) \
@@ -58,7 +58,7 @@ class Gauss_Seidel:
         pass
 
     def __ajustar_diagonal(self, coeficientes=None, terms_indep=None, variables=None):
-        if all(arg != None for arg in (coeficientes, terms_indep, variables)):
+        if all(arg is not None for arg in (coeficientes, terms_indep, variables)):
             self.__coeficientes, self.__terms_indep, self.__variables \
                 = coeficientes, terms_indep, variables
         for permutacion in self.__permutar_indices():
@@ -71,7 +71,7 @@ class Gauss_Seidel:
                          " para que tenga una diagonal sin ceros")
 
     def __permutar_indices(self, cant_indices=None):
-        if cant_indices == None:
+        if cant_indices is None:
             cant_indices = self.__coeficientes.shape[0]
         permutacion = np.empty((cant_indices,), np.int64)
         indices = [i for i in range(cant_indices - 1, -1, -1)]
@@ -82,7 +82,7 @@ class Gauss_Seidel:
         if indice_perm < 0:
             yield permutacion
         for i, indice in enumerate(indices):
-            if indice == None:
+            if indice is None:
                 continue
             permutacion[indice_perm] = indice
             indices[i] = None
