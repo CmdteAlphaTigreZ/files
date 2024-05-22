@@ -23,7 +23,7 @@ class Gauss_Seidel:
             # Si es estandar, se realizan las conversiones apropiadas
             if estandar:
                 self.__coeficientes = coeficientes.transpose().astype(np.float64)
-                self.__terms_indep = terms_indep.transpose().astype(np.float64)
+                self.__terms_indep = np.ravel(terms_indep.transpose()).astype(np.float64)
             else:
                 self.__coeficientes = coeficientes.astype(np.float64)
                 self.__terms_indep = terms_indep.astype(np.float64)
