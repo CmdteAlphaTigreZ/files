@@ -57,6 +57,38 @@ class Gauss_Seidel:
         self.__ajustar_diagonal()
         pass
 
+    def __ajustar_diagonal(self, coeficientes=None, terms_indep=None, variables=None):
+        if all(arg != None for arg in (coeficientes, terms_indep, variables)):
+            self.__coeficientes, self.__terms_indep, self.__variables \
+                = coeficientes, terms_indep, variables
+        for permutacion in self.__permutar_indices():
+            coeficientes = self.__coeficientes[permutacion]
+            if np.diag(coeficientes).all():
+                # Por ahora no se hace nada con las variables
+                self.__coeficientes = coeficientes
+                return
+        raise ValueError("La matriz de coeficientes no se puede reordenar"
+                         " para que tenga una diagonal sin ceros")
+
+    def __permutar_indices(self, cant_indices=None):
+        if cant_indices == None:
+            cant_indices = self.__coeficientes.shape[0]
+        permutacion = np.empty((cant_indices,), np.int64)
+        indices = [i for i in range(cant_indices - 1, -1, -1)]
+        yield from self.__permutar_indices_rec(indices, permutacion, cant_indices - 1)
+
+    @staticmethod
+    def __permutar_indices_rec(indices, permutacion, indice_perm):
+        if indice_perm < 0:
+            yield permutacion
+        for i, indice in enumerate(indices):
+            if indice == None:
+                continue
+            permutacion[indice_perm] = indice
+            indices[i] = None
+            yield from Gauss_Seidel.__permutar_indices_rec(indices, permutacion, indice_perm - 1)
+            indices[i] = indice
+
     @staticmethod
     def __comprobar_atributos(coeficientes, terms_indep, estandar=True):
         if not isinstance(coeficientes, np.ndarray):
