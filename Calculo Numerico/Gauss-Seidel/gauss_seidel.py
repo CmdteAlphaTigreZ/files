@@ -53,11 +53,21 @@ class Gauss_Seidel:
             raise TypeError(Gauss_Seidel.__MSG_ERROR_NO_TENSOR % "terms_indep")
         if coeficientes.ndim != 2:
             raise TypeError("'coeficientes' no es una matriz (2D)")
-        if not (terms_indep.ndim == 2 and terms_indep.shape[1] == 1):
-            raise TypeError("'terms_indep' no es un vector columna (2D - len(2a_dim)==1)")
-        if coeficientes.shape[0] != terms_indep.shape[0]:
-            raise ValueError("La matriz de coeficientes y el vector de"
-                             " términos independientes no tienen el mismo"
-                             " número de filas")
+        if estandar:
+            if not (terms_indep.ndim == 2 and terms_indep.shape[1] == 1):
+                raise TypeError("'terms_indep' no es un vector columna"
+                                " (2D, len(2a_dim)==1)")
+            if coeficientes.shape[0] != terms_indep.shape[0]:
+                raise ValueError("La matriz de coeficientes y el vector de"
+                                " términos independientes no tienen el mismo"
+                                " número de filas")
+        else:
+            if not terms_indep.ndim == 1:
+                raise TypeError("'terms_indep' no es un vector fila"
+                                " (1D, modo no estandar)")
+            if coeficientes.shape[1] != terms_indep.shape[0]:
+                raise ValueError("La matriz de coeficientes y el vector de"
+                                " términos independientes no tienen el mismo"
+                                " número de columnas (modo no estandar)")
         if coeficientes.shape[0] != coeficientes.shape[1]:
             raise TypeError("La matriz de coeficientes no es cuadrada")
