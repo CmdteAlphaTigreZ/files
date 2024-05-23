@@ -52,10 +52,22 @@ class Gauss_Seidel:
                                    % str(type(self)) ) from e
             variables = self.__variables \
                 = np.zeros(self.__coeficientes.shape[:1], np.float64)
-
-        coeficientes, terms_indep = self.__coeficientes, self.__terms_indep
+        terms_indep = self.__terms_indep
+        if np.linalg.det(self.__coeficientes) == 0:
+            raise ValueError("El sistema de ecuaciones no tiene solución")
         self.__ajustar_diagonal()
-        pass
+        diagonal = np.diag(self.__coeficientes)
+        resto = self.__coeficientes.copy()
+        np.fill_diagonal(resto, 0)
+        variables_anteriores = np.empty(variables.shape, np.float64)
+        for i in range(iteraciones_max):
+            variables_anteriores[:] = variables
+            for i in range(variables.size):
+                variables[i] = (terms_indep[i] - variables * resto[:, i]) / diagonal[i]
+            if np.abs(variables - variables_anteriores).max() <= error_abs_max:
+                break
+        self.__resuelto = True
+        return (variables[:, np.newaxis] if estandar else variables).copy()
 
     def __ajustar_diagonal(self, coeficientes=None, terms_indep=None, variables=None):
         if all(arg is not None for arg in (coeficientes, terms_indep, variables)):
