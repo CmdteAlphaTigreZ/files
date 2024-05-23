@@ -63,7 +63,7 @@ class GaussSeidel:
         for i in range(iteraciones_max):
             variables_anteriores[:] = variables
             for i in range(variables.size):
-                variables[i] = (terms_indep[i] - variables * resto[:, i]) / diagonal[i]
+                variables[i] = (terms_indep[i] - variables.dot(resto[:, i])) / diagonal[i]
             if np.abs(variables - variables_anteriores).max() <= error_abs_max:
                 break
         self.__resuelto = True
