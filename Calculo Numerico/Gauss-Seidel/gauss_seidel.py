@@ -3,7 +3,7 @@
 
 import numpy as np
 
-class Gauss_Seidel:
+class GaussSeidel:
 
     __MSG_ERROR_NO_TENSOR = "'%s' no es un tensor de numpy"
     __MSG_ERROR_AMBOS_TENSORES = "tanto 'coeficientes' como 'terms_indep' deben proporcionarse o ser None"
@@ -15,7 +15,7 @@ class Gauss_Seidel:
             self.__variables = None
             self.__resuelto = None #tri-estado
         elif coeficientes is None ^ terms_indep is None:
-            raise TypeError(Gauss_Seidel.__MSG_ERROR_AMBOS_TENSORES)
+            raise TypeError(GaussSeidel.__MSG_ERROR_AMBOS_TENSORES)
         else:
             self.__comprobar_atributos(coeficientes, terms_indep, estandar)
             # Se usa internamente las traspuestas de los tensores
@@ -36,7 +36,7 @@ class Gauss_Seidel:
             self.__init__(coeficientes, terms_indep, estandar)
             variables = self.__variables
         elif coeficientes is None ^ terms_indep is None:
-            raise TypeError(Gauss_Seidel.__MSG_ERROR_AMBOS_TENSORES)
+            raise TypeError(GaussSeidel.__MSG_ERROR_AMBOS_TENSORES)
         else:
             if self.__resuelto is None:
                 raise RuntimeError("Objeto '%s' no inicializado"
@@ -98,15 +98,15 @@ class Gauss_Seidel:
                 continue
             permutacion[indice_perm] = indice
             indices[i] = None
-            yield from Gauss_Seidel.__permutar_indices_rec(indices, permutacion, indice_perm - 1)
+            yield from GaussSeidel.__permutar_indices_rec(indices, permutacion, indice_perm - 1)
             indices[i] = indice
 
     @staticmethod
     def __comprobar_atributos(coeficientes, terms_indep, estandar=True):
         if not isinstance(coeficientes, np.ndarray):
-            raise TypeError(Gauss_Seidel.__MSG_ERROR_NO_TENSOR % "coeficientes")
+            raise TypeError(GaussSeidel.__MSG_ERROR_NO_TENSOR % "coeficientes")
         if not isinstance(terms_indep, np.ndarray):
-            raise TypeError(Gauss_Seidel.__MSG_ERROR_NO_TENSOR % "terms_indep")
+            raise TypeError(GaussSeidel.__MSG_ERROR_NO_TENSOR % "terms_indep")
         if coeficientes.ndim != 2:
             raise TypeError("'coeficientes' no es una matriz (2D)")
         if estandar:
