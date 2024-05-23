@@ -14,7 +14,7 @@ class GaussSeidel:
             self.__terms_indep = None
             self.__variables = None
             self.__resuelto = None #tri-estado
-        elif coeficientes is None ^ terms_indep is None:
+        elif (coeficientes is None) ^ (terms_indep is None):
             raise TypeError(GaussSeidel.__MSG_ERROR_AMBOS_TENSORES)
         else:
             self.__comprobar_atributos(coeficientes, terms_indep, estandar)
@@ -35,7 +35,7 @@ class GaussSeidel:
         if coeficientes is not None and terms_indep is not None:
             self.__init__(coeficientes, terms_indep, estandar)
             variables = self.__variables
-        elif coeficientes is None ^ terms_indep is None:
+        elif (coeficientes is None) ^ (terms_indep is None):
             raise TypeError(GaussSeidel.__MSG_ERROR_AMBOS_TENSORES)
         else:
             if self.__resuelto is None:
