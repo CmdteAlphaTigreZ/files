@@ -43,7 +43,7 @@ class GaussSeidel:
                                    % str(type(self)) )
             if self.__resuelto and isinstance(self.__variables, np.ndarray) \
                 and self.__variables.shape == self.__coeficientes.shape[:1]:
-                return self.__variables
+                return (variables[:, np.newaxis] if estandar else variables).copy()
             try:
                 self.__comprobar_atributos(self.__coeficientes,
                                            self.__terms_indep, estandar=False)
