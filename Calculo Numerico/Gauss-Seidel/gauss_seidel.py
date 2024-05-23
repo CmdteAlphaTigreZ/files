@@ -52,10 +52,10 @@ class GaussSeidel:
                                    % str(type(self)) ) from e
             variables = self.__variables \
                 = np.zeros(self.__coeficientes.shape[:1], np.float64)
-        terms_indep = self.__terms_indep
         if np.linalg.det(self.__coeficientes) == 0:
             raise ValueError("El sistema de ecuaciones no tiene solución")
         self.__ajustar_diagonal()
+        terms_indep = self.__terms_indep
         diagonal = np.diag(self.__coeficientes)
         resto = self.__coeficientes.copy()
         np.fill_diagonal(resto, 0)
@@ -74,17 +74,18 @@ class GaussSeidel:
             self.__coeficientes, self.__terms_indep, self.__variables \
                 = coeficientes, terms_indep, variables
         for permutacion in self.__permutar_indices():
-            coeficientes = self.__coeficientes[permutacion]
+            # Permutando columnas para no tener que permutar variables luego
+            coeficientes = self.__coeficientes[:, permutacion]
             if np.diag(coeficientes).all():
-                # Por ahora no se hace nada con las variables
                 self.__coeficientes = coeficientes
+                self.__terms_indep = self.__terms_indep[permutacion]
                 return
         raise ValueError("La matriz de coeficientes no se puede reordenar"
                          " para que tenga una diagonal sin ceros")
 
     def __permutar_indices(self, cant_indices=None):
         if cant_indices is None:
-            cant_indices = self.__coeficientes.shape[0]
+            cant_indices = self.__coeficientes.shape[1]
         permutacion = np.empty((cant_indices,), np.int64)
         indices = [i for i in range(cant_indices - 1, -1, -1)]
         yield from self.__permutar_indices_rec(indices, permutacion, cant_indices - 1)
