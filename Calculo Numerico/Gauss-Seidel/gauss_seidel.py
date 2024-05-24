@@ -6,7 +6,8 @@ import numpy as np
 class GaussSeidel:
 
     __MSG_ERROR_NO_TENSOR = "'%s' no es un tensor de numpy"
-    __MSG_ERROR_AMBOS_TENSORES = "tanto 'coeficientes' como 'terms_indep' deben proporcionarse o ser None"
+    __MSG_ERROR_AMBOS_TENSORES = "tanto 'coeficientes' como 'terms_indep'" \
+                                 " deben proporcionarse o ser None"
 
     def __init__(self, coeficientes=None, terms_indep=None, estandar=True):
         if coeficientes is None and terms_indep is None:
@@ -43,7 +44,8 @@ class GaussSeidel:
                                    % str(type(self)) )
             if self.__resuelto and isinstance(self.__variables, np.ndarray) \
                 and self.__variables.shape == self.__coeficientes.shape[:1]:
-                return (variables[:, np.newaxis] if estandar else variables).copy()
+                return (variables[:, np.newaxis] if estandar else variables) \
+                       .copy()
             try:
                 self.__comprobar_atributos(self.__coeficientes,
                                            self.__terms_indep, estandar=False)
@@ -63,13 +65,15 @@ class GaussSeidel:
         for i in range(iteraciones_max):
             variables_anteriores[:] = variables
             for i in range(variables.size):
-                variables[i] = (terms_indep[i] - variables.dot(resto[:, i])) / diagonal[i]
+                variables[i] = (terms_indep[i] - variables.dot(resto[:, i])) \
+                               / diagonal[i]
             if np.abs(variables - variables_anteriores).max() <= error_abs_max:
                 break
         self.__resuelto = True
         return (variables[:, np.newaxis] if estandar else variables).copy()
 
-    def __ajustar_diagonal(self, coeficientes=None, terms_indep=None, variables=None):
+    def __ajustar_diagonal(self, coeficientes=None, terms_indep=None,
+                           variables=None):
         if all(arg is not None for arg in (coeficientes, terms_indep, variables)):
             self.__coeficientes, self.__terms_indep, self.__variables \
                 = coeficientes, terms_indep, variables
@@ -88,7 +92,8 @@ class GaussSeidel:
             cant_indices = self.__coeficientes.shape[1]
         permutacion = np.empty((cant_indices,), np.int64)
         indices = [i for i in range(cant_indices - 1, -1, -1)]
-        yield from self.__permutar_indices_rec(indices, permutacion, cant_indices - 1)
+        yield from self.__permutar_indices_rec(indices, permutacion,
+                                               cant_indices - 1)
 
     @staticmethod
     def __permutar_indices_rec(indices, permutacion, indice_perm):
@@ -99,7 +104,8 @@ class GaussSeidel:
                 continue
             permutacion[indice_perm] = indice
             indices[i] = None
-            yield from GaussSeidel.__permutar_indices_rec(indices, permutacion, indice_perm - 1)
+            yield from GaussSeidel.__permutar_indices_rec(indices, permutacion,
+                                                          indice_perm - 1)
             indices[i] = indice
 
     @staticmethod
