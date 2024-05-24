@@ -8,6 +8,7 @@ class GaussSeidel:
     __MSG_ERROR_NO_TENSOR = "'%s' no es un tensor de numpy"
     __MSG_ERROR_AMBOS_TENSORES = "tanto 'coeficientes' como 'terms_indep'" \
                                  " deben proporcionarse o ser None"
+    __CANT_COMPARADOS = 3  # Véase el método resolver
 
     def __init__(self, coeficientes=None, terms_indep=None, estandar=True):
         if coeficientes is None and terms_indep is None:
@@ -56,19 +57,40 @@ class GaussSeidel:
                 = np.zeros(self.__coeficientes.shape[:1], np.float64)
         if np.linalg.det(self.__coeficientes) == 0:
             raise ValueError("El sistema de ecuaciones no tiene solución")
+
         self.__ajustar_diagonal()
         terms_indep = self.__terms_indep
         diagonal = np.diag(self.__coeficientes)
         resto = self.__coeficientes.copy()
         np.fill_diagonal(resto, 0)
         variables_anteriores = np.empty(variables.shape, np.float64)
-        for i in range(iteraciones_max):
+        cant_comparados = self.__CANT_COMPARADOS
+        if (cant_comparados <= iteraciones_max):
+            errores_abs_max = np.empty(cant_comparados)
+            for j in range(cant_comparados):
+                variables_anteriores[:] = variables
+                for i in range(variables.size):
+                    variables[i] = (terms_indep[i] - variables.dot(resto[:, i])) \
+                                / diagonal[i]
+                errores_abs_max[j] = np.abs(variables - variables_anteriores).max()
+            if all(errores_abs_max[i + 1] > errores_abs_max[i]
+                   for i in range(cant_comparados - 1) ):
+                # Puede que no cubra todos los casos posibles
+                # (ej., divergencia convexa)
+                raise RuntimeError("La sucesión de soluciones no es convergente."
+                                "  El método de Gauss-Seidel no es apropiado")
+            del errores_abs_max
+        else:
+            cant_comparados = 0
+        # Copia de arriba, no comprobación de convergencia y sí de error absoluto
+        for i in range(iteraciones_max - cant_comparados):
             variables_anteriores[:] = variables
             for i in range(variables.size):
                 variables[i] = (terms_indep[i] - variables.dot(resto[:, i])) \
                                / diagonal[i]
             if np.abs(variables - variables_anteriores).max() <= error_abs_max:
                 break
+        # Fin de copia
         self.__resuelto = True
         return (variables[:, np.newaxis] if estandar else variables).copy()
 
