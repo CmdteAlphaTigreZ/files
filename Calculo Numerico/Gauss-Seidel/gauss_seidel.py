@@ -23,7 +23,7 @@ class GaussSeidel:
             # Si es estandar, se realizan las conversiones apropiadas
             if estandar:
                 self.__coeficientes = coeficientes.transpose().astype(np.float64)
-                self.__terms_indep = np.ravel(terms_indep.transpose()).astype(np.float64)
+                self.__terms_indep = np.ravel(terms_indep).astype(np.float64)
             else:
                 self.__coeficientes = coeficientes.astype(np.float64)
                 self.__terms_indep = terms_indep.astype(np.float64)
@@ -111,9 +111,10 @@ class GaussSeidel:
         if coeficientes.ndim != 2:
             raise TypeError("'coeficientes' no es una matriz (2D)")
         if estandar:
-            if not (terms_indep.ndim == 2 and terms_indep.shape[1] == 1):
+            if not (terms_indep.ndim == 1
+                    or terms_indep.ndim == 2 and terms_indep.shape[1] == 1):
                 raise TypeError("'terms_indep' no es un vector columna"
-                                " (2D, len(2a_dim)==1)")
+                                " (2D, len(2a_dim)==1) ni un vector fila (1D)")
             if coeficientes.shape[0] != terms_indep.shape[0]:
                 raise ValueError("La matriz de coeficientes y el vector de"
                                 " términos independientes no tienen el mismo"
