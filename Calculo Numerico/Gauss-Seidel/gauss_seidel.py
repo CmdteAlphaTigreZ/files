@@ -72,7 +72,9 @@ class GaussSeidel:
         cant_comparados = self.__CANT_COMPARADOS
         if (cant_comparados <= iteraciones_max):
             errores_abs_max = np.empty(cant_comparados)
-            for j in range(cant_comparados):
+            # Se descarta el primer error porque puede estar sesgado
+            # debido a la estimación inicial de las variables
+            for j in range(-1, cant_comparados):
                 variables_anteriores[:] = variables
                 for i in range(variables.size):
                     variables[i] = (terms_indep[i] - variables.dot(resto[:, i])) \
@@ -85,6 +87,7 @@ class GaussSeidel:
                 raise RuntimeError("La sucesión de soluciones no es convergente."
                                 "  El método de Gauss-Seidel no es apropiado")
             del errores_abs_max
+            cant_comparados += 1  # Cuenta la iteración extra
         else:
             cant_comparados = 0
         # Copia de arriba, no comprobación de convergencia y sí de error absoluto
