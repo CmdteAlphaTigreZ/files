@@ -168,3 +168,50 @@ class GaussSeidel:
                                 " número de columnas (modo no estandar)")
         if coeficientes.shape[0] != coeficientes.shape[1]:
             raise TypeError("La matriz de coeficientes no es cuadrada")
+
+def _probar():
+    coeficientes = np.arange(9).reshape((3, 3))
+    terms_indep = np.arange(1, 4)
+    Resolvedor = GaussSeidel()
+    locales = locals()
+    print("Tipos o valores incorrectos")
+    _probar_fallo("Resolvedor.resolver(1)", locales)
+    _probar_fallo("Resolvedor.resolver(coeficientes, 1)", locales)
+    _probar_fallo("Resolvedor.resolver(coeficientes[np.newaxis], terms_indep)", locales)
+    _probar_fallo("Resolvedor.resolver(coeficientes, np.vstack((terms_indep, np.ones(3))) )", locales)
+    _probar_fallo("Resolvedor.resolver(coeficientes, np.hstack((terms_indep, np.ones(3))) )", locales)
+    _probar_fallo("Resolvedor.resolver(coeficientes, terms_indep[:, np.newaxis], estandar=False)", locales)
+    _probar_fallo("Resolvedor.resolver(coeficientes, np.hstack((terms_indep, np.ones(3))), estandar=False)", locales)
+    _probar_fallo("Resolvedor.resolver(np.hstack((coeficientes, terms_indep[:, np.newaxis])), terms_indep)", locales)
+    print("Matriz de coeficientes singular")
+    _probar_fallo("Resolvedor.resolver(coeficientes, terms_indep)", locales)
+    print("Sistema no convergente")
+    coeficientes[0, 0] = 1
+    _probar_fallo("Resolvedor.resolver(coeficientes, terms_indep)", locales)
+    print("Matriz de coeficientes diagonalmente dominante")
+    coeficientes = np.array( ((20,  4, -5),
+                              (-2, 30,  1),
+                              ( 7, -1, 35)) )
+    for i, j in zip(coeficientes, terms_indep[:, np.newaxis]):
+        print(i, j)
+    np.set_printoptions(13)
+    print(Resolvedor.resolver(coeficientes, terms_indep, error_abs_max=0.5e-6))
+    print("Reutilización de calculos",
+          Resolvedor.resolver(error_abs_max=0.5e-6),
+          Resolvedor.resolver(error_abs_max=0.5e-9),
+          Resolvedor.resolver(iteraciones_max=100),
+          Resolvedor.resolver(error_abs_max=0.5e-13, iteraciones_max=5),
+          Resolvedor.resolver(error_abs_max=0.5e-13),
+          sep="\n")
+    print("Resultado de numpy",
+          np.linalg.solve(coeficientes, terms_indep)[:, np.newaxis],
+          sep="\n")
+    np.set_printoptions(8)
+
+def _probar_fallo(codigo_fuente, locales):
+    try:
+        exec(codigo_fuente, globals(), locales)
+    except (TypeError, ValueError, RuntimeError) as e:
+        print("\t", e, sep="")
+    else:
+        raise RuntimeError("Prueba fallida:\n" + codigo_fuente)
