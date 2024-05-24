@@ -31,6 +31,8 @@ class GaussSeidel:
                 self.__terms_indep = terms_indep.astype(np.float64)
             self.__variables = np.zeros(self.__coeficientes.shape[:1], np.float64)
             self.__resuelto = False
+        self.__error_abs_max_real = float("Inf")
+        self.__iteraciones_reales = 0
 
     def resolver(self, coeficientes=None, terms_indep=None,
                  error_abs_max=1e-6, iteraciones_max=50, estandar=True):
@@ -44,9 +46,12 @@ class GaussSeidel:
                 raise RuntimeError("Objeto '%s' no inicializado"
                                    % str(type(self)) )
             if self.__resuelto and isinstance(self.__variables, np.ndarray) \
-                and self.__variables.shape == self.__coeficientes.shape[:1]:
+                and self.__variables.shape == self.__coeficientes.shape[:1] \
+                and (self.__error_abs_max_real <= error_abs_max
+                     or self.__iteraciones_reales >= iteraciones_max):
+                variables = self.__variables
                 return (variables[:, np.newaxis] if estandar else variables) \
-                       .copy()
+                       .copy()  # Copia del 'return' final
             try:
                 self.__comprobar_atributos(self.__coeficientes,
                                            self.__terms_indep, estandar=False)
@@ -83,7 +88,7 @@ class GaussSeidel:
         else:
             cant_comparados = 0
         # Copia de arriba, no comprobación de convergencia y sí de error absoluto
-        for i in range(iteraciones_max - cant_comparados):
+        for iteraciones_reales in range(iteraciones_max - cant_comparados):
             variables_anteriores[:] = variables
             for i in range(variables.size):
                 variables[i] = (terms_indep[i] - variables.dot(resto[:, i])) \
@@ -91,6 +96,9 @@ class GaussSeidel:
             if np.abs(variables - variables_anteriores).max() <= error_abs_max:
                 break
         # Fin de copia
+        iteraciones_reales += cant_comparados
+        self.__error_abs_max_real = np.abs(variables - variables_anteriores).max()
+        self.__iteraciones_reales = iteraciones_reales
         self.__resuelto = True
         return (variables[:, np.newaxis] if estandar else variables).copy()
 
