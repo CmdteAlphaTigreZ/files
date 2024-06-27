@@ -1,7 +1,5 @@
-import NumPy as np
+import numpy as np
 
-A = np.array([[1, 2, 1], [2, -1, 1], [3, 1, -1]])
-B = np.array([4, 1, -2])
-x = np.linalg.solve(A, B)
+def resolver_ec_lineales(A, b):
+    return np.linalg.solve(A, b)
 
-print(x)
