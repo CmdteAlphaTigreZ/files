@@ -140,7 +140,7 @@ def generar_trazador_cubico_sujeto_simbolico(valores_x, valores_y):
         for i in range(len(valores_x) - 1):
             if valores_x[i] <= x < valores_x[i + 1]:
                 return simbolicos[i](x)
-        if valor == valores_x[-1]:
+        if x == valores_x[-1]:
             return simbolicos[-1](x)
     return trazador
 
